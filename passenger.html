@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Passenger - SmartBus Tracker</title>
   <style>
     body{font-family:Arial, sans-serif;margin:0;padding:20px;background:#f8fafc;color:#0f172a}
@@ -16,7 +17,7 @@
   <h1>Passenger Dashboard</h1>
   <div class="card">
     <p>Enter your Bus/Van Number to check its current location:</p>
-    <input id="busNo" type="text" placeholder="e.g. VAN24">
+    <input id="busNo" type="text" placeholder="e.g. 101">
     <button onclick="findBus()">Check Location</button>
     <div id="result">Location: —</div>
   </div>
@@ -24,15 +25,21 @@
   <script>
     function findBus(){
       const bus = document.getElementById('busNo').value.trim();
-      if(!bus){ alert("Enter bus/van number"); return; }
-      // demo: read data from localStorage (set by driver panel)
-      const data = JSON.parse(localStorage.getItem('busLocations') || "{}");
-      if(data[bus]){
-        const {lat,lng,time} = data[bus];
-        document.getElementById('result').textContent = 
-          `Location of ${bus}: Lat ${lat.toFixed(5)}, Lng ${lng.toFixed(5)} (updated ${new Date(time).toLocaleTimeString()})`;
+      if(!bus){ 
+        alert("Enter bus/van number"); 
+        return; 
+      }
+
+      // driver_panel.html ने data localStorage में "bus_<number>" key से save किया है
+      const data = JSON.parse(localStorage.getItem("bus_" + bus));
+
+      const resultDiv = document.getElementById('result');
+
+      if(data){
+        resultDiv.innerHTML = 
+          `Bus ${bus} is at Lat: ${data.lat}, Lng: ${data.lng} <br>(Last update: ${data.time})`;
       } else {
-        document.getElementById('result').textContent = `No live data found for ${bus}`;
+        resultDiv.textContent = `No live data found for Bus ${bus}`;
       }
     }
   </script>

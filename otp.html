@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Driver OTP Login</title>
+  <style>
+    body{font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#f8fafc}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);width:300px;text-align:center}
+    input{padding:10px;width:100%;border-radius:8px;border:1px solid #ddd;margin-bottom:10px}
+    button{padding:10px 14px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer;font-weight:600}
+    button:hover{background:#1e40af}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Driver OTP Login</h2>
+    <p>Enter the OTP sent to your phone</p>
+    <input id="otp" type="text" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify</button>
+  </div>
+
+  <script>
+    function verifyOTP() {
+      const otp = document.getElementById("otp").value;
+      if (otp === "1234") {   // Demo OTP
+        alert("Login Successful!");
+        window.location.href = "driver_panel.html";  // ✅ Driver Panel पर redirect
+      } else {
+        alert("Invalid OTP, try again.");
+      }
+    }
+  </script>
+</body>
+</html>
