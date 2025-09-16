@@ -4,6 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Passenger - SmartBus Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
     body{
       font-family:Arial, sans-serif;
@@ -68,6 +70,7 @@
       <input id="busNo" type="text" placeholder="e.g. 101">
       <button onclick="findBus()">Check Location</button>
       <div id="result">Location: —</div>
+      <div id="map" style="width:100%; height:400px; margin-top:20px; border-radius:12px;"></div>
     </div>
   </div>
 
@@ -98,6 +101,22 @@
     });
 
     // Location finder
+    let map = L.map('map').setView([26.8467, 80.9462], 13); // Default center (Lucknow)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+let marker;
+function showOnMap(lat, lng, bus){
+  if(marker){
+    marker.setLatLng([lat, lng]);
+    marker.setPopupContent(`Bus ${bus}`).openPopup();
+  } else {
+    marker = L.marker([lat, lng]).addTo(map).bindPopup(`Bus ${bus}`).openPopup();
+  }
+  map.setView([lat, lng], 14);
+}
+
     function findBus(){
       const bus = document.getElementById('busNo').value.trim();
       if(!bus){ 
@@ -111,6 +130,7 @@
       if(data){
         resultDiv.innerHTML = 
           `Bus ${bus} is at Lat: ${data.lat}, Lng: ${data.lng} <br>(Last update: ${data.time})`;
+           showOnMap(data.lat, data.lng, bus);
       } else {
         resultDiv.textContent = `No live data found for Bus ${bus}`;
       }
