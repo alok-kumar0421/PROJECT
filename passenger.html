@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Passenger - SmartBus Tracker</title>
+  <style>
+    body{font-family:Arial, sans-serif;margin:0;padding:20px;background:#f8fafc;color:#0f172a}
+    h1{color:#1e40af;font-size:1.3rem;margin-bottom:12px}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    input{padding:10px;border-radius:8px;border:1px solid #ddd;width:100%;margin-bottom:10px}
+    button{padding:10px 14px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
+    #result{margin-top:12px;font-weight:600;color:#065f46}
+  </style>
+</head>
+<body>
+  <h1>Passenger Dashboard</h1>
+  <div class="card">
+    <p>Enter your Bus/Van Number to check its current location:</p>
+    <input id="busNo" type="text" placeholder="e.g. VAN24">
+    <button onclick="findBus()">Check Location</button>
+    <div id="result">Location: —</div>
+  </div>
+
+  <script>
+    function findBus(){
+      const bus = document.getElementById('busNo').value.trim();
+      if(!bus){ alert("Enter bus/van number"); return; }
+      // demo: read data from localStorage (set by driver panel)
+      const data = JSON.parse(localStorage.getItem('busLocations') || "{}");
+      if(data[bus]){
+        const {lat,lng,time} = data[bus];
+        document.getElementById('result').textContent = 
+          `Location of ${bus}: Lat ${lat.toFixed(5)}, Lng ${lng.toFixed(5)} (updated ${new Date(time).toLocaleTimeString()})`;
+      } else {
+        document.getElementById('result').textContent = `No live data found for ${bus}`;
+      }
+    }
+  </script>
+</body>
+</html>
