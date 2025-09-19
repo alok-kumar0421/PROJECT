@@ -1,40 +1,201 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Driver Login</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Driver Login (Firebase)</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <style>
-    body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f1f5f9}
-    .box{max-width:400px;margin:50px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
-    input{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:10px}
-    button{padding:10px 14px;border:none;border-radius:8px;background:#16a34a;color:#fff;cursor:pointer}
+    :root{
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --success:#16a34a;
+      --success-dark:#15803d;
+      --bg1:#e0f2fe;
+      --bg2:#dbeafe;
+      --card-bg:#ffffff;
+    }
+
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin:0;
+      padding:20px;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    .box{
+      max-width:380px;
+      width:100%;
+      background:var(--card-bg);
+      padding:30px 24px;
+      border-radius:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.08);
+      text-align:center;
+      transition:transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .box:hover{
+      transform:translateY(-6px);
+      box-shadow:0 16px 40px rgba(0,0,0,0.15);
+    }
+
+    h2{color:var(--primary); margin-bottom:20px;}
+
+    .input-group{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:#f9fafb;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:10px 12px;
+      margin-bottom:14px;
+      transition:border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-group:focus-within{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(37,99,235,0.2);
+    }
+
+    .input-group span{font-size:1.2rem;}
+
+    input{
+      flex:1;
+      border:none;
+      outline:none;
+      font-size:1rem;
+      background:transparent;
+    }
+
+    button{
+      position:relative;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(90deg, var(--primary), #3b82f6);
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      width:100%;
+      font-size:1rem;
+      margin-bottom:10px;
+      overflow:hidden;
+      z-index:0;
+      transition:all 0.4s ease;
+    }
+
+    /* Shiny reflection line */
+    button::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:-100%;
+      width:100%;
+      height:100%;
+      background:linear-gradient(120deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 60%, transparent 80%);
+      transform:skewX(-25deg);
+      transition:all 0.6s;
+      z-index:1;
+    }
+    button:hover::before{
+      left:120%;
+    }
+
+    /* Hover glow + scale + gradient change */
+    button:hover{
+      transform:scale(1.05);
+      background:linear-gradient(90deg, #3b82f6, var(--primary-dark));
+      box-shadow:0 8px 25px rgba(37,99,235,0.45);
+    }
+
+    button.success{
+      background:linear-gradient(90deg, var(--success), #22c55e);
+    }
+    button.success:hover{
+      background:linear-gradient(90deg, var(--success), var(--success-dark));
+      box-shadow:0 8px 25px rgba(16,185,129,0.45);
+      transform:scale(1.05);
+    }
+
+    p{font-size:0.9rem; color:#6b7280;}
   </style>
 </head>
 <body>
   <div class="box">
     <h2>Driver Login</h2>
-    <input id="phone" type="text" placeholder="Phone number">
-    <button onclick="sendOtp()">Send OTP</button>
-    <div id="otpBlock" style="display:none">
-      <input id="otp" type="text" placeholder="Enter OTP">
-      <button onclick="verifyOtp()">Login</button>
+
+    <div class="input-group">
+      <span>📱</span>
+      <input id="phone" type="text" placeholder="+91XXXXXXXXXX">
     </div>
-    <p style="font-size:0.9rem;color:#6b7280">Demo: OTP is always 1234</p>
+    <div id="recaptcha-container"></div>
+    <button onclick="sendOtp()">Send OTP</button>
+
+    <div id="otpBlock" style="display:none">
+      <div class="input-group">
+        <span>🔑</span>
+        <input id="otp" type="text" placeholder="Enter OTP">
+      </div>
+      <button class="success" onclick="verifyOtp()">Login</button>
+    </div>
   </div>
 
   <script>
-    function sendOtp(){
-      if(document.getElementById('phone').value.trim()==""){ alert("Enter phone"); return; }
-      alert("OTP sent! (Demo: 1234)");
-      document.getElementById('otpBlock').style.display="block";
-    }
-    function verifyOtp(){
-      if(document.getElementById('otp').value.trim()=="1234"){
-        sessionStorage.setItem("driverPhone", document.getElementById('phone').value.trim());
-        location.href="driver_panel.html";
-      } else {
-        alert("Invalid OTP. Use 1234 for demo.");
+    // 🔥 Firebase Config (console से copy करो)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBUcm6pOEwuXYIJ0c6yoVcy8a9i7XOgONs",
+      authDomain: "bustrack-a0329.firebaseapp.com",
+      projectId: "bustrack-a0329",
+      storageBucket: "bustrack-a0329.firebasestorage.app",
+      messagingSenderId: "721698300135",
+      appId: "1:721698300135:web:3f36a58079393d34078242"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Recaptcha
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'normal',
+      'callback': (response) => {
+        console.log("Recaptcha solved");
       }
+    });
+
+    let confirmationResult;
+
+    function sendOtp(){
+      const phone = document.getElementById('phone').value;
+      if(phone===""){ alert("Enter phone number"); return; }
+
+      auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+        .then((result) => {
+          confirmationResult = result;
+          alert("OTP sent to " + phone);
+          document.getElementById('otpBlock').style.display="block";
+        }).catch((error) => {
+          console.error(error);
+          alert(error.message);
+        });
+    }
+
+    function verifyOtp(){
+      const otp = document.getElementById('otp').value;
+      confirmationResult.confirm(otp)
+        .then((result) => {
+          const user = result.user;
+          alert("Login success: " + user.phoneNumber);
+          // Save session
+          sessionStorage.setItem("driverPhone", user.phoneNumber);
+          location.href="driver_panel.html";
+        }).catch((error) => {
+          console.error(error);
+          alert("Invalid OTP");
+        });
     }
   </script>
 </body>
