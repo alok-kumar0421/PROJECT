@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Driver Login (Firebase)</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <title>Driver Login</title>
   <style>
     :root{
       --primary:#2563eb;
@@ -89,7 +87,6 @@
       transition:all 0.4s ease;
     }
 
-    /* Shiny reflection line */
     button::before{
       content:"";
       position:absolute;
@@ -106,7 +103,6 @@
       left:120%;
     }
 
-    /* Hover glow + scale + gradient change */
     button:hover{
       transform:scale(1.05);
       background:linear-gradient(90deg, #3b82f6, var(--primary-dark));
@@ -133,7 +129,6 @@
       <span>📱</span>
       <input id="phone" type="tel" placeholder="Mobile no">
     </div>
-    <div id="recaptcha-container"></div>
     <button onclick="sendOtp()">Send OTP</button>
 
     <div id="otpBlock" style="display:none">
@@ -146,64 +141,33 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBUcm6pOEwuXYIJ0c6yoVcy8a9i7XOgONs",
-      authDomain: "bustrack-a0329.firebaseapp.com",
-      projectId: "bustrack-a0329",
-      storageBucket: "bustrack-a0329.firebasestorage.app",
-      messagingSenderId: "721698300135",
-      appId: "1:721698300135:web:3f36a58079393d34078242"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Recaptcha
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      'size': 'normal',
-      'callback': (response) => {
-        console.log("Recaptcha solved");
-      }
-    });
-
-    let confirmationResult;
-
     function sendOtp(){
       const phone = document.getElementById('phone').value;
-      if(phone===""){ alert("Enter phone number"); return; }
-
-      auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-        .then((result) => {
-          confirmationResult = result;
-          alert("OTP sent to " + phone);
-          document.getElementById('otpBlock').style.display="block";
-        }).catch((error) => {
-          console.error(error);
-          alert(error.message);
-        });
+      if(phone===""){ 
+        alert("Enter phone number"); 
+        return; 
+      }
+      alert("Demo OTP sent to " + phone + " (use 1234)");
+      document.getElementById('otpBlock').style.display="block";
     }
 
     function verifyOtp(){
       const otp = document.getElementById('otp').value;
-      confirmationResult.confirm(otp)
-        .then((result) => {
-          const user = result.user;
-          alert("Login success: " + user.phoneNumber);
-          // Save session
-          sessionStorage.setItem("driverPhone", user.phoneNumber);
-          location.href="driver_panel.html";
-        }).catch((error) => {
-          console.error(error);
-          alert("Invalid OTP");
-        });
+      if(otp === "1234"){
+        alert("Login success (Demo) with " + document.getElementById('phone').value);
+        sessionStorage.setItem("driverPhone", document.getElementById('phone').value);
+        location.href="driver_panel.html";
+      } else {
+        alert("Invalid OTP (use 1234 for demo)");
+      }
     }
+
     const phoneInput = document.getElementById('phone');
-
-phoneInput.addEventListener('input', () => {
-  let val = phoneInput.value.replace(/\D/g, ''); // remove non-digits
-  if (!val.startsWith('91')) val = '91' + val;   // add 91 if missing
-  phoneInput.value = '+' + val;                  // display with +
-});
-
+    phoneInput.addEventListener('input', () => {
+      let val = phoneInput.value.replace(/\D/g, ''); 
+      if (!val.startsWith('91')) val = '91' + val;   
+      phoneInput.value = '+' + val;                  
+    });
   </script>
 </body>
 </html>
