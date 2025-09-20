@@ -121,6 +121,11 @@
   <h2>🚌 Driver Panel</h2>
   <div class="card">
     <div class="input-group">
+      <span>🧑‍✈️</span>
+      <input id="driverName" type="text" placeholder="Enter Driver Name">
+    </div>
+
+    <div class="input-group">
       <span>🔢</span>
       <input id="busNo" type="text" placeholder="Enter your Bus/Van Number">
     </div>
@@ -135,23 +140,33 @@
 
   <script>
     let interval;
-    let lat = 26.8467, lng = 80.9462; // Lucknow coords as starting point
+    let lat = 26.8467, lng = 80.9462; // Lucknow as base
 
     function startTrip(){
       const bus = document.getElementById('busNo').value.trim();
-      if(!bus){ alert("Enter bus number"); return; }
+      const driver = document.getElementById('driverName').value.trim();
+      if(!bus || !driver){ alert("Enter both Driver Name and Bus Number"); return; }
       if(interval){ alert("Trip already started"); return; }
 
-      document.getElementById('status').textContent=`✅ Trip started for ${bus}`;
+      document.getElementById('status').textContent=`✅ Trip started for Bus ${bus} by ${driver}`;
 
       interval = setInterval(()=>{
+        // simulate location change
         lat += (Math.random()-0.5)*0.002;
         lng += (Math.random()-0.5)*0.002;
 
-        // save each bus data in "bus_<number>" format
-        localStorage.setItem("bus_" + bus, JSON.stringify({
-          lat, lng, time: new Date().toLocaleTimeString()
-        }));
+        // fetch existing bus data
+        let allData = JSON.parse(localStorage.getItem("busLocations") || "{}");
+
+        allData[bus] = {
+          driver: driver,
+          bus: bus,
+          lat: lat,
+          lng: lng,
+          time: new Date().toLocaleTimeString()
+        };
+
+        localStorage.setItem("busLocations", JSON.stringify(allData));
       }, 3000);
     }
 
