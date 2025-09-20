@@ -1,277 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SmartBus Tracker - Improved Card Hover</title>
-  <style>
-    :root{
-      --bg1: #ebf8ff;
-      --bg2: #dbeafe;
-      --card-bg: #ffffff;
-      --primary: #2563eb;
-      --success: #16a34a;
-      --muted: #6b7280;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBus Tracker</title>
+    <style>
+        /* --- CSS Variables from BOTH files --- */
+        :root {
+            /* Splash Screen Variables */
+            --sky-blue: #87CEEB;
+            --road-gray: #4a4a4a;
+            --bus-blue: #1e40af;
+            --bus-window: #cce7ff;
+            --wheel-dark: #222;
 
-    *{box-sizing: border-box}
+            /* Main App Variables */
+            --bg1: #ebf8ff;
+            --bg2: #dbeafe;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --success: #16a34a;
+            --muted: #6b7280;
+        }
 
-    body{
-      margin:0;
-      font-family: Inter, Arial, sans-serif;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:30px;
-    }
+        /* --- General Styles --- */
+        * {
+            box-sizing: border-box;
+        }
 
-    .container{
-      width:100%;
-      max-width:1000px;
-      text-align:center;
-    }
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            /* This background is for the main app, it will be revealed later */
+            background: linear-gradient(135deg, var(--bg1), var(--bg2));
+            overflow: hidden; /* Prevents scrollbars during animation */
+        }
 
-    h1{
-      margin:0 0 8px;
-      color:#1e40af;
-      font-size:2.25rem;
-    }
+        /* --- Splash Screen Styles --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--sky-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensures it's on top */
+            animation: fadeOutSplashScreen 1s ease-out 4s forwards;
+        }
 
-    p.subtitle{
-      color: #374151;
-      margin-bottom:20px;
-    }
+        .splash-screen .app-title {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInTitle 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2s forwards;
+            position: absolute;
+        }
 
-    /* grid */
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:28px;
-    }
+        .road {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 15vh;
+            background-color: var(--road-gray);
+            border-top: 8px solid #333;
+            background-image: linear-gradient(to right, #f0f0f0 50%, transparent 50%);
+            background-size: 80px 6px;
+            background-repeat: repeat-x;
+            background-position: center;
+        }
+        
+        .bus-container {
+            position: absolute;
+            bottom: 10vh;
+            left: -200px;
+            width: 180px;
+            height: 100px;
+            animation: moveBus 3s linear 0.5s forwards;
+        }
 
-    @media(min-width:768px){
-      .grid{ grid-template-columns:1fr 1fr; }
-    }
+        .bus {
+            width: 100%;
+            height: 80%;
+            background-color: var(--bus-blue);
+            border-radius: 15px 15px 5px 5px;
+            position: relative;
+            border: 3px solid #112667;
+        }
 
-    /* card base */
-    .card{
-      position:relative;
-      background:var(--card-bg);
-      border-radius:16px;
-      padding:30px 26px;
-      overflow:hidden;
-      cursor:pointer;
-      transform-style:preserve-3d;
-      transition: transform 350ms cubic-bezier(.2,.9,.3,1), 
-                  box-shadow 350ms cubic-bezier(.2,.9,.3,1);
-      will-change: transform, box-shadow;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      min-height:180px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-    }
+        .bus-window {
+            position: absolute;
+            top: 10px;
+            background-color: var(--bus-window);
+            height: 30px;
+            border: 2px solid #112667;
+        }
 
-    /* subtle icon */
-    .card .icon{
-      font-size:3.2rem;
-      margin-bottom:12px;
-      transition: transform 350ms;
-      transform-origin:center;
-    }
+        .window-1 { left: 10px; width: 30px; }
+        .window-2 { left: 50px; width: 30px; }
+        .window-3 { left: 90px; width: 30px; }
+        .window-4 { left: 130px; width: 30px; }
 
-    .card h2{
-      margin:0;
-      font-size:1.4rem;
-      color:#0f172a;
-    }
+        .wheel {
+            position: absolute;
+            bottom: -15px;
+            width: 35px;
+            height: 35px;
+            background-color: var(--wheel-dark);
+            border-radius: 50%;
+            border: 5px solid #555;
+            animation: spinWheels 0.5s linear infinite;
+        }
+        .wheel-front { left: 20px; }
+        .wheel-back { right: 20px; }
 
-    .card p{
-      color:var(--muted);
-      margin:12px 0 18px;
-      font-size:0.95rem;
-    }
+        /* --- Splash Screen Keyframes --- */
+        @keyframes moveBus {
+            to { transform: translateX(120vw); }
+        }
+        @keyframes spinWheels {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes fadeInTitle {
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeOutSplashScreen {
+            to { opacity: 0; visibility: hidden; }
+        }
 
-    /* hover overlay (gradient) */
-    .card::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(120deg, rgba(37,99,235,0.06), rgba(6,95,70,0.03));
-      opacity:0;
-      transform:translateY(8px);
-      transition: opacity 300ms, transform 300ms;
-      pointer-events:none;
-    }
+        /* --- Main App (Card Selection Page) Styles --- */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Changed to column for better alignment */
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            width: 100%;
+        }
 
-    /* action button hidden initially */
-    .action-btn{
-      display:inline-block;
-      padding:10px 18px;
-      border-radius:10px;
-      border:none;
-      color:white;
-      font-weight:600;
-      letter-spacing:0.2px;
-      transform: translateY(12px);
-      opacity:0;
-      transition: transform 320ms cubic-bezier(.2,.9,.3,1), opacity 320ms;
-      box-shadow: 0 8px 20px rgba(16,24,40,0.08);
-    }
+        .main-content {
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
 
-    /* different color variants */
-    .btn-blue{ background:var(--primary); }
-    .btn-green{ background:var(--success); }
+        h1 {
+            margin: 0 0 8px;
+            color: #1e40af;
+            font-size: 2.25rem;
+        }
 
-    /* improved hover state */
-    .card:hover, .card.card--focus {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 18px 40px rgba(14,30,60,0.12);
-    }
+        p.subtitle {
+            color: #374151;
+            margin-bottom: 20px;
+        }
 
-    .card:hover .icon, .card.card--focus .icon{
-      transform: rotate(-6deg) scale(1.04);
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
 
-    .card:hover::after, .card.card--focus::after{
-      opacity:1;
-      transform:translateY(0);
-    }
+        @media(min-width: 768px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
 
-    .card:hover .action-btn, .card.card--focus .action-btn{
-      transform: translateY(0);
-      opacity:1;
-    }
+        .card {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px 26px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 350ms cubic-bezier(.2, .9, .3, 1),
+                        box-shadow 350ms cubic-bezier(.2, .9, .3, 1);
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* small decorative accent */
-    .card .accent {
-      position:absolute;
-      right:-40px;
-      top:-40px;
-      width:140px;
-      height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,0.12), transparent 40%);
-      transform: rotate(25deg);
-      filter: blur(8px);
-      pointer-events:none;
-      transition: opacity 300ms;
-      opacity:0;
-    }
+        .card .icon {
+            font-size: 3.2rem;
+            margin-bottom: 12px;
+            transition: transform 350ms;
+        }
 
-    .card:hover .accent, .card.card--focus .accent{ opacity:1; }
+        .card h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: #0f172a;
+        }
 
-    /* focus styles for keyboard accessibility */
-    .card:focus-within{ outline: none; }
+        .card p {
+            color: var(--muted);
+            margin: 12px 0 18px;
+            font-size: 0.95rem;
+        }
 
-    .fake-link{
-      display:inline-block;
-      margin-top:16px;
-      font-size:0.9rem;
-      color:#374151;
-      text-decoration:underline;
-    }
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(37, 99, 235, 0.06), rgba(6, 95, 70, 0.03));
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 300ms, transform 300ms;
+            pointer-events: none;
+        }
 
-    /* small helper: accessible focus ring on click/tab */
-    .card:focus-visible{
-      box-shadow: 0 18px 40px rgba(14,30,60,0.14), 
-                  0 0 0 4px rgba(37,99,235,0.12);
-      transform: translateY(-10px) scale(1.02);
-    }
+        .action-btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            transform: translateY(12px);
+            opacity: 0;
+            transition: transform 320ms cubic-bezier(.2, .9, .3, 1), opacity 320ms;
+            box-shadow: 0 8px 20px rgba(16, 24, 40, 0.08);
+        }
 
-    /* responsive tweaks */
-    @media (max-width:480px){
-      .card{ padding:22px; min-height:150px; }
-      .card .icon{ font-size:2.6rem; }
-      .action-btn{ padding:9px 14px; }
-    }
+        .btn-blue { background: var(--primary); }
+        .btn-green { background: var(--success); }
 
-    .authority-btn {
-      position: relative;
-      padding: 12px 28px;
-      font-size: 1rem;
-      font-weight: 600;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6366f1, #3b82f6, #2563eb);
-      background-size: 200% 200%;
-      animation: gradientShift 4s ease infinite;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(37,99,235,0.35);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(14, 30, 60, 0.12);
+        }
 
-    /* hover scaling */
-    .authority-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 10px 25px rgba(37,99,235,0.45);
-    }
+        .card:hover .icon {
+            transform: rotate(-6deg) scale(1.04);
+        }
 
-    /* gradient movement */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+        .card:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    /* shiny reflection line */
-    .authority-btn::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -75px;
-      width: 50px;
-      height: 100%;
-      background: rgba(255,255,255,0.6);
-      transform: skewX(-20deg);
-      opacity: 0;
-    }
+        .card:hover .action-btn {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
-    .authority-btn:hover::after {
-      animation: shine 1s forwards;
-    }
+        .card .accent {
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.12), transparent 40%);
+            transform: rotate(25deg);
+            filter: blur(8px);
+            pointer-events: none;
+            transition: opacity 300ms;
+            opacity: 0;
+        }
 
-    @keyframes shine {
-      0% { left: -75px; opacity: 0; }
-      30% { opacity: 1; }
-      100% { left: 120%; opacity: 0; }
-    }
-  </style>
+        .card:hover .accent { opacity: 1; }
+
+        .authority-btn {
+            position: relative;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #6366f1, #3b82f6, #2563eb);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .authority-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .authority-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -75px;
+            width: 50px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: skewX(-20deg);
+            opacity: 0;
+        }
+
+        .authority-btn:hover::after {
+            animation: shine 1s forwards;
+        }
+
+        @keyframes shine {
+            0% { left: -75px; opacity: 0; }
+            30% { opacity: 1; }
+            100% { left: 120%; opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <h1>SmartBus Tracker</h1>
-    <p class="subtitle">Track buses in real-time — choose who you are to continue</p>
 
-    <div class="grid" id="grid">
-      <div class="card" tabindex="0" data-role="passenger">
-        <div class="accent"></div>
-        <div class="icon" aria-hidden>🚍</div>
-        <h2>I'm a Passenger</h2>
-        <p>Find nearby buses, check live location and ETA for stops.</p>
-        <button class="action-btn btn-blue" onclick="location.href='passenger.html'">Continue</button>
-      </div>
-
-      <div class="card" tabindex="0" data-role="driver">
-        <div class="accent"></div>
-        <div class="icon" aria-hidden>👨‍✈️</div>
-        <h2>I'm a Driver</h2>
-        <p>Start/stop trips and share live location with passengers.</p>
-        <button class="action-btn btn-green" onclick="location.href='driver_login.html'">Continue</button>
-      </div>
+    <div class="splash-screen">
+        <div class="app-title">SmartBus Tracker</div>
+        <div class="road"></div>
+        <div class="bus-container">
+            <div class="bus">
+                <div class="bus-window window-1"></div>
+                <div class="bus-window window-2"></div>
+                <div class="bus-window window-3"></div>
+                <div class="bus-window window-4"></div>
+            </div>
+            <div class="wheel wheel-front"></div>
+            <div class="wheel wheel-back"></div>
+        </div>
     </div>
 
-    <div style="margin-top:26px;">
-      <div style="margin-top:40px;">
-        <button class="authority-btn" button onclick="location.href='authority.html'">
-          Authority Login
-        </button>
-      </div>
+    <div class="container" role="main">
+        <div class="main-content">
+            <h1>SmartBus Tracker</h1>
+            <p class="subtitle">Track buses in real-time — choose who you are to continue</p>
+    
+            <div class="grid" id="grid">
+                <div class="card" tabindex="0" data-role="passenger">
+                    <div class="accent"></div>
+                    <div class="icon" aria-hidden>🚍</div>
+                    <h2>I'm a Passenger</h2>
+                    <p>Find nearby buses, check live location and ETA for stops.</p>
+                    <button class="action-btn btn-blue" onclick="location.href='passenger.html'">Continue</button>
+                </div>
+    
+                <div class="card" tabindex="0" data-role="driver">
+                    <div class="accent"></div>
+                    <div class="icon" aria-hidden>👨‍✈️</div>
+                    <h2>I'm a Driver</h2>
+                    <p>Start/stop trips and share live location with passengers.</p>
+                    <button class="action-btn btn-green" onclick="location.href='driver_login.html'">Continue</button>
+                </div>
+            </div>
+    
+            <div style="margin-top: 40px;">
+                <button class="authority-btn" onclick="location.href='authority1.html'">
+                    Authority Login
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
+
 </body>
 </html>
