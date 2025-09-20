@@ -131,7 +131,7 @@
 
     <div class="input-group">
       <span>📱</span>
-      <input id="phone" type="text" placeholder="+91XXXXXXXXXX">
+      <input id="phone" type="tel" placeholder="Mobile no">
     </div>
     <div id="recaptcha-container"></div>
     <button onclick="sendOtp()">Send OTP</button>
@@ -196,6 +196,14 @@
           alert("Invalid OTP");
         });
     }
+    const phoneInput = document.getElementById('phone');
+
+phoneInput.addEventListener('input', () => {
+  let val = phoneInput.value.replace(/\D/g, ''); // remove non-digits
+  if (!val.startsWith('91')) val = '91' + val;   // add 91 if missing
+  phoneInput.value = '+' + val;                  // display with +
+});
+
   </script>
 </body>
 </html>
