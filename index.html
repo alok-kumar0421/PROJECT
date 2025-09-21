@@ -320,7 +320,11 @@
         }
     </style>
 </head>
-<body>
+<body><script>
+    if (!sessionStorage.getItem("loggedInUser")) {
+    window.location.href = "login.html";
+  }
+</script>
     <div class="splash-screen">
         <div class="app-title">SmartBus Tracker</div>
         <div class="road"></div>

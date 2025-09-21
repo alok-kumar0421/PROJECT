@@ -196,6 +196,7 @@
   </div>
 
   <script>
+    
     const loginTab = document.getElementById("loginTab");
     const signupTab = document.getElementById("signupTab");
     const loginForm = document.getElementById("loginForm");
@@ -289,7 +290,7 @@
   msg.classList.add("success");
 
   // Save login state
-  localStorage.setItem("loggedInUser", username);
+  sessionStorage.setItem("loggedInUser", username);
 
   // Redirect to index.html after a short delay
   setTimeout(() => {
