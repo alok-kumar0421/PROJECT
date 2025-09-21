@@ -31,9 +31,8 @@
         body {
             margin: 0;
             font-family: Inter, Arial, sans-serif;
-            /* This background is for the main app, it will be revealed later */
             background: linear-gradient(135deg, var(--bg1), var(--bg2));
-            overflow: hidden; /* Prevents scrollbars during animation */
+            overflow: hidden;
         }
 
         /* --- Splash Screen Styles --- */
@@ -48,7 +47,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* Ensures it's on top */
+            z-index: 1000;
             animation: fadeOutSplashScreen 1s ease-out 4s forwards;
         }
 
@@ -138,7 +137,7 @@
         .container {
             min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Changed to column for better alignment */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 30px;
@@ -320,11 +319,7 @@
         }
     </style>
 </head>
-<body><script>
-    if (!sessionStorage.getItem("loggedInUser")) {  // not local storage
-    window.location.href = "login.html";
-  }
-</script>
+<body>
     <div class="splash-screen">
         <div class="app-title">SmartBus Tracker</div>
         <div class="road"></div>
@@ -364,9 +359,17 @@
             </div>
     
             <div style="margin-top: 40px;">
-                <button class="authority-btn" onclick="location.href='authority1.html'">
-                    Authority Login
-                </button>
+                <div style="margin-bottom: 20px;">
+                    <button class="authority-btn" onclick="location.href='login.html'">
+                        Sign Up
+                    </button>
+                </div>
+
+                <div>
+                    <button class="authority-btn" onclick="location.href='authority.html'">
+                        Authority Login
+                    </button>
+                </div>
             </div>
         </div>
     </div>
