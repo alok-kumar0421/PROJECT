@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Driver Login - SmartBus Tracker</title>
+
+  <style>
+    :root{
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --success:#16a34a;
+      --success-dark:#15803d;
+      --bg1:#e0f2fe;
+      --bg2:#dbeafe;
+      --card-bg:#ffffff;
+    }
+
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin:0;
+      padding:20px;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    .box{
+      max-width:380px;
+      width:100%;
+      background:var(--card-bg);
+      padding:30px 24px;
+      border-radius:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.08);
+      text-align:center;
+      transition:transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .box:hover{
+      transform:translateY(-6px);
+      box-shadow:0 16px 40px rgba(0,0,0,0.15);
+    }
+
+    h2{color:var(--primary); margin-bottom:20px;}
+
+    .input-group{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:#f9fafb;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:10px 12px;
+      margin-bottom:14px;
+      transition:border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-group:focus-within{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(37,99,235,0.2);
+    }
+
+    .input-group span{font-size:1.2rem;}
+
+    input{
+      flex:1;
+      border:none;
+      outline:none;
+      font-size:1rem;
+      background:transparent;
+    }
+
+    button{
+      position:relative;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(90deg, var(--primary), #3b82f6);
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      width:100%;
+      font-size:1rem;
+      margin-bottom:10px;
+      overflow:hidden;
+      z-index:0;
+      transition:all 0.4s ease;
+    }
+
+    /* Shiny reflection line */
+    button::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:-100%;
+      width:100%;
+      height:100%;
+      background:linear-gradient(120deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 60%, transparent 80%);
+      transform:skewX(-25deg);
+      transition:all 0.6s;
+      z-index:1;
+    }
+    button:hover::before{
+      left:120%;
+    }
+
+    /* Hover glow + scale + gradient change */
+    button:hover{
+      transform:scale(1.05);
+      background:linear-gradient(90deg, #3b82f6, var(--primary-dark));
+      box-shadow:0 8px 25px rgba(37,99,235,0.45);
+    }
+
+    button.success{
+      background:linear-gradient(90deg, var(--success), #22c55e);
+    }
+    button.success:hover{
+      background:linear-gradient(90deg, var(--success), var(--success-dark));
+      box-shadow:0 8px 25px rgba(16,185,129,0.45);
+      transform:scale(1.05);
+    }
+
+    p{font-size:0.9rem; color:#6b7280;}
+  </style>
+</head>
+<body>
+  <!--STARTS HERE-->
+  <div class="box">
+    <h2>Login</h2>
+
+    <div class="input-group">
+      <span>📱</span>
+      <input id="phone" type="text" placeholder="+91XXXXXXXXXX">
+    </div>
+    <button onclick="sendOtp()">Send OTP</button>
+
+    <div id="otpBlock" style="display:none">
+      <div class="input-group">
+        <span>🔑</span>
+        <input id="otp" type="number" placeholder="Enter OTP">
+      </div>
+      <button class="success" onclick="verifyOtp()">Login</button>
+    </div>
+  </div>
+
+  <script>
+
+// Get query string ?role=user or ?role=driver
+  const urlParams = new URLSearchParams(window.location.search);
+  const role = urlParams.get('role'); // 'user', 'driver', or 'authority'
+
+  if(!role) {
+    alert("No role specified");
+    // optionally redirect back to index.html
+    window.location.href = "index.php";
+  }
+
+  // now 'role' variable can be sent to send_otp.php
+
+
+
+// Send OTP function
+function sendOtp() {
+    const phone = document.getElementById('phone').value.trim();
+    if(!phone) return alert("Enter phone number");
+
+    // Send data to backend using fetch
+    fetch('send_otp.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `phone=${encodeURIComponent(phone)}&role=${encodeURIComponent(role)}`
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert(data); // for demo, backend returns OTP message
+        // Show OTP input block
+        document.getElementById('otpBlock').style.display = 'block';
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error sending OTP");
+    });
+}
+
+
+// Verify OTP
+function verifyOtp() {
+    const phone = document.getElementById('phone').value.trim();
+    const otp = document.getElementById('otp').value.trim();
+    if(!otp) return alert("Enter OTP");
+
+    fetch('verify_otp.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `phone=${encodeURIComponent(phone)}&role=${encodeURIComponent(role)}&otp=${encodeURIComponent(otp)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        //alert(data); // backend responds with success/error
+        // redirect if successful
+         if(data.success){
+            window.location.href = data.redirect; // redirect handled by JS
+        } else {
+            alert(data.message); // show error
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error verifying OTP");
+    });
+}
+
+  </script>
+</body>
+</html>

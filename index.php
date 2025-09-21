@@ -243,6 +243,20 @@
   </style>
 </head>
 <body>
+
+
+<!-------------------------------------------------------------------------------------------->
+    <script>
+      function goToLogin(role) {
+      // Redirect to login.php and pass role in URL
+      window.location.href = "login.php?role=" + encodeURIComponent(role);;
+    }
+    </script>
+<!-------------------------------------------------------------------------------------------->
+
+
+  <!--STARTS HERE-->
+
   <div class="container" role="main">
     <h1>SmartBus Tracker</h1>
     <p class="subtitle">Track buses in real-time — choose who you are to continue</p>
@@ -253,7 +267,7 @@
         <div class="icon" aria-hidden>🚍</div>
         <h2>I'm a Passenger</h2>
         <p>Find nearby buses, check live location and ETA for stops.</p>
-        <button class="action-btn btn-blue" onclick="location.href='passenger.html'">Continue</button>
+        <button class="action-btn btn-blue" onclick="goToLogin('user')">Continue</button>
       </div>
 
       <div class="card" tabindex="0" data-role="driver">
@@ -261,17 +275,20 @@
         <div class="icon" aria-hidden>👨‍✈️</div>
         <h2>I'm a Driver</h2>
         <p>Start/stop trips and share live location with passengers.</p>
-        <button class="action-btn btn-green" onclick="location.href='driver_login.html'">Continue</button>
+        <button class="action-btn btn-green" onclick="goToLogin('driver')">Continue</button>
       </div>
     </div>
 
     <div style="margin-top:26px;">
       <div style="margin-top:40px;">
-        <button class="authority-btn" button onclick="location.href='authority.html'">
+        <button class="authority-btn" onclick="goToLogin('authority')">
           Authority Login
         </button>
       </div>
     </div>
   </div>
+
+  <!--ENDS HERE-->
+
 </body>
 </html>
