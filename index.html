@@ -7,14 +7,12 @@
     <style>
         /* --- CSS Variables from BOTH files --- */
         :root {
-            /* Splash Screen Variables */
             --sky-blue: #87CEEB;
             --road-gray: #4a4a4a;
             --bus-blue: #1e40af;
             --bus-window: #cce7ff;
             --wheel-dark: #222;
 
-            /* Main App Variables */
             --bg1: #ebf8ff;
             --bg2: #dbeafe;
             --card-bg: #ffffff;
@@ -23,254 +21,30 @@
             --muted: #6b7280;
         }
 
-        /* --- General Styles --- */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             font-family: Inter, Arial, sans-serif;
             background: linear-gradient(135deg, var(--bg1), var(--bg2));
-            /* overflow: hidden; */
         }
 
-        /* --- Splash Screen Styles --- */
-        .splash-screen {
-            position: fixed;
+        /* --- Header Styles --- */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 16px 24px;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--sky-blue);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: fadeOutSplashScreen 1s ease-out 4s forwards;
+            z-index: 2000;
         }
-
-        .splash-screen .app-title {
-            color: white;
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transform: scale(0.8);
-            animation: fadeInTitle 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2s forwards;
-            position: absolute;
-        }
-
-        .road {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 15vh;
-            background-color: var(--road-gray);
-            border-top: 8px solid #333;
-            background-image: linear-gradient(to right, #f0f0f0 50%, transparent 50%);
-            background-size: 80px 6px;
-            background-repeat: repeat-x;
-            background-position: center;
-        }
-        
-        .bus-container {
-            position: absolute;
-            bottom: 10vh;
-            left: -200px;
-            width: 180px;
-            height: 100px;
-            animation: moveBus 3s linear 0.5s forwards;
-        }
-
-        .bus {
-            width: 100%;
-            height: 80%;
-            background-color: var(--bus-blue);
-            border-radius: 15px 15px 5px 5px;
-            position: relative;
-            border: 3px solid #112667;
-        }
-
-        .bus-window {
-            position: absolute;
-            top: 10px;
-            background-color: var(--bus-window);
-            height: 30px;
-            border: 2px solid #112667;
-        }
-
-        .window-1 { left: 10px; width: 30px; }
-        .window-2 { left: 50px; width: 30px; }
-        .window-3 { left: 90px; width: 30px; }
-        .window-4 { left: 130px; width: 30px; }
-
-        .wheel {
-            position: absolute;
-            bottom: -15px;
-            width: 35px;
-            height: 35px;
-            background-color: var(--wheel-dark);
-            border-radius: 50%;
-            border: 5px solid #555;
-            animation: spinWheels 0.5s linear infinite;
-        }
-        .wheel-front { left: 20px; }
-        .wheel-back { right: 20px; }
-
-        /* --- Splash Screen Keyframes --- */
-        @keyframes moveBus {
-            to { transform: translateX(120vw); }
-        }
-        @keyframes spinWheels {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes fadeInTitle {
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fadeOutSplashScreen {
-            to { opacity: 0; visibility: hidden; }
-        }
-
-        /* --- Main App (Card Selection Page) Styles --- */
-        .container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            width: 100%;
-        }
-
-        .main-content {
-            width: 100%;
-            max-width: 1000px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            color: #1e40af;
-            font-size: 2.25rem;
-        }
-
-        p.subtitle {
-            color: #374151;
-            margin-bottom: 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 28px;
-        }
-
-        @media(min-width: 768px) {
-            .grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        .card {
-            position: relative;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 30px 26px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 350ms cubic-bezier(.2, .9, .3, 1),
-                        box-shadow 350ms cubic-bezier(.2, .9, .3, 1);
-            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card .icon {
-            font-size: 3.2rem;
-            margin-bottom: 12px;
-            transition: transform 350ms;
-        }
-
-        .card h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: #0f172a;
-        }
-
-        .card p {
-            color: var(--muted);
-            margin: 12px 0 18px;
-            font-size: 0.95rem;
-        }
-
-        .card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, rgba(37, 99, 235, 0.06), rgba(6, 95, 70, 0.03));
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 300ms, transform 300ms;
-            pointer-events: none;
-        }
-
-        .action-btn {
-            display: inline-block;
-            padding: 10px 18px;
-            border-radius: 10px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            transform: translateY(12px);
-            opacity: 0;
-            transition: transform 320ms cubic-bezier(.2, .9, .3, 1), opacity 320ms;
-            box-shadow: 0 8px 20px rgba(16, 24, 40, 0.08);
-        }
-
-        .btn-blue { background: var(--primary); }
-        .btn-green { background: var(--success); }
-
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 18px 40px rgba(14, 30, 60, 0.12);
-        }
-
-        .card:hover .icon {
-            transform: rotate(-6deg) scale(1.04);
-        }
-
-        .card:hover::after {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .card:hover .action-btn {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .card .accent {
-            position: absolute;
-            right: -40px;
-            top: -40px;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.12), transparent 40%);
-            transform: rotate(25deg);
-            filter: blur(8px);
-            pointer-events: none;
-            transition: opacity 300ms;
-            opacity: 0;
-        }
-
-        .card:hover .accent { opacity: 1; }
 
         .authority-btn {
             position: relative;
-            padding: 12px 28px;
+            padding: 10px 22px;
             font-size: 1rem;
             font-weight: 600;
             color: white;
@@ -280,7 +54,6 @@
             background: linear-gradient(90deg, #6366f1, #3b82f6, #2563eb);
             background-size: 200% 200%;
             animation: gradientShift 4s ease infinite;
-            overflow: hidden;
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
             transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
@@ -317,9 +90,159 @@
             30% { opacity: 1; }
             100% { left: 120%; opacity: 0; }
         }
+
+        /* --- Splash Screen --- */
+        .splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--sky-blue);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeOutSplashScreen 1s ease-out 4s forwards;
+        }
+
+        .splash-screen .app-title {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInTitle 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2s forwards;
+            position: absolute;
+        }
+
+        .road {
+            position: absolute;
+            bottom: 0; width: 100%; height: 15vh;
+            background-color: var(--road-gray);
+            border-top: 8px solid #333;
+            background-image: linear-gradient(to right, #f0f0f0 50%, transparent 50%);
+            background-size: 80px 6px;
+            background-repeat: repeat-x;
+            background-position: center;
+        }
+
+        .bus-container {
+            position: absolute;
+            bottom: 10vh; left: -200px;
+            width: 180px; height: 100px;
+            animation: moveBus 3s linear 0.5s forwards;
+        }
+
+        .bus {
+            width: 100%; height: 80%;
+            background-color: var(--bus-blue);
+            border-radius: 15px 15px 5px 5px;
+            position: relative;
+            border: 3px solid #112667;
+        }
+
+        .bus-window {
+            position: absolute;
+            top: 10px;
+            background-color: var(--bus-window);
+            height: 30px;
+            border: 2px solid #112667;
+        }
+
+        .window-1 { left: 10px; width: 30px; }
+        .window-2 { left: 50px; width: 30px; }
+        .window-3 { left: 90px; width: 30px; }
+        .window-4 { left: 130px; width: 30px; }
+
+        .wheel {
+            position: absolute;
+            bottom: -15px;
+            width: 35px; height: 35px;
+            background-color: var(--wheel-dark);
+            border-radius: 50%;
+            border: 5px solid #555;
+            animation: spinWheels 0.5s linear infinite;
+        }
+        .wheel-front { left: 20px; }
+        .wheel-back { right: 20px; }
+
+        @keyframes moveBus { to { transform: translateX(120vw); } }
+        @keyframes spinWheels { to { transform: rotate(360deg); } }
+        @keyframes fadeInTitle { to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeOutSplashScreen { to { opacity: 0; visibility: hidden; } }
+
+        /* --- Main Content --- */
+        .container {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 30px; width: 100%;
+        }
+
+        .main-content { max-width: 1000px; text-align: center; }
+
+        h1 { margin: 0 0 8px; color: #1e40af; font-size: 2.25rem; }
+        p.subtitle { color: #374151; margin-bottom: 20px; }
+
+        .grid {
+            display: grid; grid-template-columns: 1fr;
+            gap: 28px;
+        }
+        @media(min-width: 768px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .card {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px 26px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 350ms, box-shadow 350ms;
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+            min-height: 180px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        .card .icon { font-size: 3.2rem; margin-bottom: 12px; transition: transform 350ms; }
+        .card h2 { margin: 0; font-size: 1.4rem; color: #0f172a; }
+        .card p { color: var(--muted); margin: 12px 0 18px; font-size: 0.95rem; }
+
+        .action-btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            transform: translateY(12px);
+            opacity: 0;
+            transition: transform 320ms, opacity 320ms;
+            box-shadow: 0 8px 20px rgba(16, 24, 40, 0.08);
+        }
+
+        .btn-blue { background: var(--primary); }
+        .btn-green { background: var(--success); }
+
+        .card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 18px 40px rgba(14, 30, 60, 0.12); }
+        .card:hover .icon { transform: rotate(-6deg) scale(1.04); }
+        .card:hover .action-btn { transform: translateY(0); opacity: 1; }
+
     </style>
 </head>
 <body>
+    <!-- Top Header -->
+    <header>
+        <button class="authority-btn" onclick="location.href='login.html'">
+            Sign Up
+        </button>
+    <button class="authority-btn" style="margin-left: 12px;" onclick="location.href='logout.html'">
+        Sign Out
+    </button>
+    </header>
+
+    <!-- Splash Screen -->
     <div class="splash-screen">
         <div class="app-title">SmartBus Tracker</div>
         <div class="road"></div>
@@ -335,41 +258,32 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="container" role="main">
         <div class="main-content">
             <h1>SmartBus Tracker</h1>
             <p class="subtitle">Track buses in real-time — choose who you are to continue</p>
-    
+
             <div class="grid" id="grid">
                 <div class="card" tabindex="0" data-role="passenger">
-                    <div class="accent"></div>
-                    <div class="icon" aria-hidden>🚍</div>
+                    <div class="icon">🚍</div>
                     <h2>I'm a Passenger</h2>
                     <p>Find nearby buses, check live location and ETA for stops.</p>
                     <button class="action-btn btn-blue" onclick="location.href='passenger.html'">Continue</button>
                 </div>
-    
+
                 <div class="card" tabindex="0" data-role="driver">
-                    <div class="accent"></div>
-                    <div class="icon" aria-hidden>👨‍✈️</div>
+                    <div class="icon">👨‍✈️</div>
                     <h2>I'm a Driver</h2>
                     <p>Start/stop trips and share live location with passengers.</p>
                     <button class="action-btn btn-green" onclick="location.href='driver_login.html'">Continue</button>
                 </div>
             </div>
-    
-            <div style="margin-top: 40px;">
-                <div style="margin-bottom: 20px;">
-                    <button class="authority-btn" onclick="location.href='login.html'">
-                        Sign Up
-                    </button>
-                </div>
 
-                <div>
-                    <button class="authority-btn" onclick="location.href='authority.html'">
-                        Authority Login
-                    </button>
-                </div>
+            <div style="margin-top: 40px;">
+                <button class="authority-btn" onclick="location.href='authority.html'">
+                    Authority Login
+                </button>
             </div>
         </div>
     </div>
