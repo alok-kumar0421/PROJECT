@@ -77,6 +77,32 @@
     }
     header.show{ opacity:1; pointer-events:auto; }
 
+    /* Dropdown for three-dot menu */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content {
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #fff;
+      min-width: 120px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 1000;
+    }
+    .dropdown-content button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 0;
+    }
+    .dropdown-content button:hover { background: #1e40af; }
+
     .authority-btn{
       position:relative; padding:10px 22px; font-size:1rem; font-weight:600; color:#fff;
       border:none; border-radius:50px; cursor:pointer; background-size:200% 200%;
@@ -178,8 +204,10 @@
 
   <!-- Header -->
   <header id="top-header">
-    <button id="signup-btn" class="authority-btn btn-blue">Sign Up</button>
-    <button id="signout-btn" class="authority-btn btn-red" style="display:none;">Sign Out</button>
+    <div class="dropdown">
+      <button id="menu-btn" class="authority-btn btn-blue">⋮</button>
+      <div id="dropdown-content" class="dropdown-content"></div>
+    </div>
   </header>
 
   <!-- Main -->
@@ -213,10 +241,10 @@
   </div>
 
   <script>
-    // show header after splash
+    // Show header after splash
     setTimeout(()=> document.getElementById('top-header').classList.add('show'), 5000);
 
-    // shine hover effect
+    // Shine hover effect
     document.querySelectorAll('.authority-btn').forEach(btn=>{
       btn.addEventListener('mouseenter', ()=>{
         btn.classList.remove('shine');
@@ -225,34 +253,44 @@
       });
     });
 
-    // Auth state logic
-    const signupBtn = document.getElementById('signup-btn');
-    const signoutBtn = document.getElementById('signout-btn');
+    // Dropdown logic with auth state
+    const menuBtn = document.getElementById('menu-btn');
+    const dropdownContent = document.getElementById('dropdown-content');
 
-    function updateAuthUI(){
+    function updateDropdown(){
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      dropdownContent.innerHTML = ''; // clear old buttons
+
       if(isLoggedIn){
-        signupBtn.style.display = 'none';
-        signoutBtn.style.display = 'inline-block';
+        const signOutBtn = document.createElement('button');
+        signOutBtn.textContent = 'Sign Out';
+        signOutBtn.addEventListener('click', ()=>{
+          localStorage.removeItem('isLoggedIn');
+          updateDropdown();
+        });
+        dropdownContent.appendChild(signOutBtn);
       } else {
-        signupBtn.style.display = 'inline-block';
-        signoutBtn.style.display = 'none';
+        const signUpBtn = document.createElement('button');
+        signUpBtn.textContent = 'Sign Up';
+        signUpBtn.addEventListener('click', ()=>{
+          localStorage.setItem('isLoggedIn','true');
+          updateDropdown();
+          location.href='login.html';
+        });
+        dropdownContent.appendChild(signUpBtn);
       }
     }
 
-    signupBtn.addEventListener('click', ()=>{
-      localStorage.setItem('isLoggedIn','true');
-      updateAuthUI();
-      location.href = 'login.html'; // redirect after signup
+    menuBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      dropdownContent.style.display = dropdownContent.style.display === 'flex' ? 'none' : 'flex';
     });
 
-    signoutBtn.addEventListener('click', ()=>{
-      localStorage.removeItem('isLoggedIn');
-      updateAuthUI();
+    window.addEventListener('click', ()=>{
+      dropdownContent.style.display = 'none';
     });
 
-    // run on page load
-    updateAuthUI();
+    updateDropdown();
   </script>
 </body>
 </html>
