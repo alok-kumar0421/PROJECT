@@ -4,15 +4,26 @@ session_start();
 include 'db_connection.php'; // provides $conn (mysqli)
 
 // Get POST data
-$name   = trim($_POST['name'] ?? '');
-$phone  = trim($_POST['mobile'] ?? '');  // from your signup.html input
-$email  = trim($_POST['email'] ?? '');
-$pass   = $_POST['password'] ?? '';
-$conf   = $_POST['confirm'] ?? '';
-$role   = $_POST['role'] ?? 'user';
-$driver_reg_no = trim($_POST['driverId'] ?? '');   // from signup.html field
-$bus_number    = trim($_POST['bus_number'] ?? '');
+//$name   = trim($_POST['name'] ?? '');
+//$phone  = trim($_POST['mobile'] ?? '');  // from your signup.html input
+//$email  = trim($_POST['email'] ?? '');
+//$pass   = $_POST['password'] ?? '';
+//$conf   = $_POST['confirm'] ?? '';
+//$role   = $_POST['role'] ?? 'user';
+//$driver_reg_no = trim($_POST['driverId'] ?? '');   // from signup.html field
+//$bus_number    = trim($_POST['bus_number'] ?? '');
 
+//new code mei upar wala hai but wo error de rha tha ki form khaali hai to maine niche wala code likha hai
+
+// Get POST data (assumes form names: name, phone, email, password, confirm, role, driver_reg_no, bus_number)
+ $name = isset($_POST['name']) ? trim($_POST['name']) : ''; 
+ $phone = isset($_POST['phone']) ? trim($_POST['phone']) : ''; 
+ $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+ $pass = isset($_POST['password']) ? $_POST['password'] : ''; 
+ $conf = isset($_POST['confirm']) ? $_POST['confirm'] : '';
+ $role = isset($_POST['role']) ? $_POST['role'] : 'user'; 
+ $driver_reg_no = isset($_POST['driver_reg_no']) ? trim($_POST['driver_reg_no']) : ''; 
+ $bus_number = isset($_POST['bus_number']) ? trim($_POST['bus_number']) : '';
 // Basic validation
 if ($name === '' || $phone === '' || $email === '' || $pass === '' || $conf === '') {
     die("All required fields must be filled.");

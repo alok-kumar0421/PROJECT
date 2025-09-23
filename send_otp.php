@@ -47,5 +47,54 @@ $expiry = date("Y-m-d H:i:s", strtotime("+5 minutes"));
 $conn->query("INSERT INTO otp_table (phone, otp_code, expiry, role) VALUES ('$phone','$otp','$expiry','$role')");
 
 // For now show OTP directly
-echo "OTP for $phone is: $otp <br> Use this in verify_otp.php";
-?>
+//echo "OTP for $phone is: $otp <br> Use this in verify_otp.php";
+
+
+// Fetch user details (name + email) from users table
+$userDetails = $conn->query("SELECT name, email FROM users WHERE phone='$phone'")->fetch_assoc();
+$userName  = $userDetails['name'];
+$userEmail = $userDetails['email'];
+
+// Your Brevo API Key
+$apiKey = getenv('BREVO_API_KEY');
+
+// Your template ID from Brevo
+$templateId = 1; 
+
+// Prepare payload
+$data = [
+    "to" => [
+        [
+            "email" => $userEmail,
+            "name"  => $userName
+        ]
+    ],
+    "templateId" => $templateId,
+    "params" => [
+        "name" => $userName,
+        "otp"  => $otp
+    ]
+];
+
+// Send email via Brevo API
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://api.brevo.com/v3/smtp/email");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "accept: application/json",
+    "api-key: $apiKey",
+    "content-type: application/json"
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+// Execute request
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+if ($httpCode == 201) {
+    echo "OTP sent to $userEmail!";
+} else {
+    echo "Failed to send OTP. Response: $response";
+}
