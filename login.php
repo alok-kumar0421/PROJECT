@@ -131,7 +131,7 @@
 
     <div class="input-group">
       <span>📱</span>
-      <input id="phone" type="text" placeholder="+91XXXXXXXXXX">
+      <input id="phone" type="tel" placeholder="Mobile Number">
     </div>
     <button onclick="sendOtp()">Send OTP</button>
 

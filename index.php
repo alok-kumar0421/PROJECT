@@ -318,6 +318,35 @@
             30% { opacity: 1; }
             100% { left: 120%; opacity: 0; }
         }
+
+        /* -- Sign Up Button Styles -- */
+        .hidden {
+    display: none;
+}
+
+.top-bar {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 1100; /* stays above splash + content */
+}
+.signup-btn {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    background: linear-gradient(90deg, #6366f1, #3b82f6, #2563eb);
+    color: white;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.signup-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
+}
+
     </style>
 </head>
 <body>
@@ -329,6 +358,22 @@
       // Redirect to login.php and pass role in URL
       window.location.href = "login.php?role=" + encodeURIComponent(role);;
     }
+
+    // Show Sign Up button after splash screen
+window.addEventListener("DOMContentLoaded", () => {
+  const splash = document.querySelector(".splash-screen");
+  const signupBtn = document.getElementById("signupBtn");
+
+  // Wait until splash fade-out animation ends
+  splash.addEventListener("animationend", () => {
+    // Hide splash completely
+    splash.style.display = "none";
+    // Show the signup button
+    signupBtn.classList.remove("hidden");
+  });
+});
+</script>
+
     </script>
 <!-------------------------------------------------------------------------------------------->
 
@@ -354,9 +399,10 @@
 
 
 
-
-
-
+<!---Sign Up button---->
+<header class="top-bar">
+  <button class="signup-btn hidden" id="signupBtn" onclick="window.location.href='signup.html'">Sign Up</button>
+</header>
 
 
 
